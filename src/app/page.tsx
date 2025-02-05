@@ -1,14 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import { File, mockFiles } from "../lib/mock-data"
+import { useEffect, useState } from "react"
+import { mockFiles } from "../lib/mock-data"
 import { Folder, FileIcon, Upload, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { Button } from "~/components/ui/button"
 
-
 export default function GoogleDriveClone() {
   const [currentFolder, setCurrentFolder] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const getCurrentFiles = () => {
     return mockFiles.filter((file) => file.parent === currentFolder)
@@ -37,6 +41,10 @@ export default function GoogleDriveClone() {
 
   const handleUpload = () => {
     alert("Upload functionality would be implemented here")
+  }
+
+  if (!mounted) {
+    return null // or a loading spinner
   }
 
   return (
@@ -79,7 +87,7 @@ export default function GoogleDriveClone() {
           </div>
           <ul>
             {getCurrentFiles().map((file) => (
-              <li key={file.id} className="px-6 py-4 border-b border-gray-700 hover:bg-gray-750">
+              <li key={file.id} className="px-6 py-4 border-b border-gray-700 hover:bg-gray-700">
                 <div className="grid grid-cols-12 gap-4 items-center">
                   <div className="col-span-6 flex items-center">
                     {file.type === "folder" ? (
@@ -91,7 +99,7 @@ export default function GoogleDriveClone() {
                         {file.name}
                       </button>
                     ) : (
-                      <Link href={file.url || "#"} className="flex items-center text-gray-100 hover:text-blue-400">
+                      <Link href={file.url ?? "#"} className="flex items-center text-gray-100 hover:text-blue-400">
                         <FileIcon className="mr-3" size={20} />
                         {file.name}
                       </Link>
